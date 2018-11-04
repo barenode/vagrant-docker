@@ -39,20 +39,19 @@ docker pull registry
 systemctl restart docker
 #docker run -dit -p 5000:5000 --name registry registry
 
-sed -i 's/dockerd/dockerd --insecure-registry 192.168.72.101:5000 -H tcp:\/\/0.0.0.0:2376 -H unix:\/\/var\/run\/docker.sock/' /usr/lib/systemd/system/docker.service
+sed -i 's%dockerd%dockerd -H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock --insecure-registry 192.168.72.101:5000%' /usr/lib/systemd/system/docker.service
+
 systemctl daemon-reload
 systemctl restart docker
 docker run -dit -p 5000:5000 --name registry registry
  
 docker pull jboss/wildfly
-docker build -t 192.168.72.101:5000/wildfly /opt/dev/dockerfiles/test1/.
+docker build -t 192.168.72.101:5000/wildfly /opt/dev/docker/wildfly/.
 docker push 192.168.72.101:5000/wildfly
 
 SCRIPT
   config.vm.provision :shell do |shell|
     shell.inline = $script
-  end
-  
-      
+  end     
 end
                         
